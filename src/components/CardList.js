@@ -4,7 +4,9 @@ import Card from "./Card";
 
 const cardList = ({robots}) => 
 {
-
+// if(true){ // testing purposes for errorBoundry 
+//   throw new Error("fadfas")
+// }
   // 1nd Method 
 
   // return (
