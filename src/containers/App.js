@@ -1,4 +1,5 @@
-import { React , Component} from 'react';
+/* eslint-disable react-hooks/rules-of-hooks */
+import React , {useState , useEffect } from 'react';
 import CardList from '../components/CardList'
 // import {robots} from './robots'
 import SearchBox from '../components/SearchBox'
@@ -7,49 +8,40 @@ import 'tachyons'
 import Scroll from '../components/Scroll'
 import ErrorBoundry from '../components/ErrorBoundry';
 
-class App extends Component  {
-  constructor(){
-    super();
-    // state is what change in the app / It's what describes the app.
-    //the virtual Dom is just a javascript object the virtual Dom is just a new object that collects this entire state and re-act uses this state to render and pass them down as props to these components so that these components that are just pure functions can just render.
-    this.state ={
-      robots : [],
-      searchField: ''
-    }
-  }
+const app = () => {
 
-  componentDidMount(){
+  const [robots , setRobots] = useState([]);
+  const [searchFiled , setSearchFiled] = useState('');
+
+  useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/users')
     .then(res => res.json())
-    .then(usr => this.setState({robots:usr}));
-  }
+    .then(usr => {setRobots(usr)})
+    console.log(robots , searchFiled)
+  },[]);
 
-  onSearchChange = (event) => {
-    // console.log(event.target.value);
-    this.setState({
-      searchField : event.target.value
+  const onSearchChange = (event) => {  
+    setSearchFiled(event.target.value)
+    }
+     
+  const filterRobots = robots.filter(robot => {
+      return robot.name
+      .toLowerCase()
+      .includes(searchFiled.toLowerCase())
     })
-    // console.log(filterRobots);
-  }
-  
-  render(){   
-    const {robots , searchField} = this.state;
-      const filterRobots = robots.filter(robot => {
-        return robot.name
-        .toLowerCase()
-        .includes(searchField.toLowerCase())
-      })
-      return !robots.length ?
-        <h1 className='tc'> Loading...</h1> :
-    <div className="tc">
-    <h1 className='f1'>RoboFriends</h1>
-    <SearchBox searchChange={this.onSearchChange} />
-    <Scroll>
-      <ErrorBoundry>
-    <CardList robots={filterRobots} />
-      </ErrorBoundry>
-    </Scroll>
-    </div>  
- }
+
+    return !robots.length ?
+      <h1 className='tc'> Loading...</h1> :
+      <div className="tc">
+      <h1 className='f1'>RoboFriends</h1>
+      <SearchBox searchChange={onSearchChange} />
+      <Scroll>
+        <ErrorBoundry>
+      <CardList robots={filterRobots} />
+        </ErrorBoundry>
+      </Scroll>
+      </div>  
+
 }
-export default App;
+
+export default app;
